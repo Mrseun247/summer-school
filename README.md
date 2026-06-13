@@ -41,7 +41,7 @@ If you want me to attempt the push from this environment, confirm you have git a
 Email confirmations (optional)
 
 - This project can send an automatic confirmation email to each registrant using EmailJS.
-- Create an EmailJS account, add an email `service` (your service id is `service_7p2w0ab`) and create a `template` (for example `template_congrats`) with variables: `to_name`, `to_email`, `student_name`, `track`, `message`.
+- Create an EmailJS account, add an email `service` (your service id is `service_tbzjg6k`) and create a `template` (for example `template_congrats`) with variables: `to_name`, `to_email`, `student_name`, `track`, `message`.
 - In the browser (before loading `summer.html`) set two global variables to enable sending:
 
 ```html
