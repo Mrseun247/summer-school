@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeMind Summer — Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sun:    #FFD32A;
+      --coral:  #FF5E3A;
+      --sky:    #00AEEF;
+      --mint:   #1BFFB8;
+      --ink:    #0D1117;
+      --paper:  #F5F7FA;
+      --muted:  #6B7280;
+      --card:   #FFFFFF;
+      --radius: 16px;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Space Grotesk', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 40px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .logo {
+      font-family: var(--mono);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .logo-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--coral);
+      display: inline-block;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.7; }
+    }
+    .nav-cta {
+      background: var(--ink);
+      color: #fff;
+      padding: 9px 20px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--coral); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 120px 40px 80px;
+      position: relative;
+      overflow: hidden;
+      background: var(--ink);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,211,42,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,211,42,0.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .orb1 { width: 500px; height: 500px; top: -100px; right: -100px; background: rgba(255,94,58,0.25); }
+    .orb2 { width: 350px; height: 350px; bottom: -80px; left: 10%; background: rgba(0,174,239,0.2); }
+    .orb3 { width: 250px; height: 250px; top: 40%; right: 30%; background: rgba(27,255,184,0.12); }
+
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: 1100px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+    }
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mint);
+      margin-bottom: 20px;
+    }
+    .hero-h1 {
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.08;
+      margin-bottom: 24px;
+    }
+    .hero-h1 .accent { color: var(--sun); }
+    .hero-body {
+      color: rgba(255,255,255,0.65);
+      font-size: 1.05rem;
+      margin-bottom: 36px;
+      max-width: 440px;
+    }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--coral);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 24px rgba(255,94,58,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,94,58,0.45); }
+    .btn-ghost {
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.8);
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--mint); color: var(--mint); }
+
+    /* code terminal card */
+    .hero-terminal {
+      background: #161b22;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    }
+    .terminal-bar {
+      background: #21262d;
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .t-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .t-dot.r { background: #ff5f56; }
+    .t-dot.y { background: #ffbd2e; }
+    .t-dot.g { background: #27c93f; }
+    .terminal-title { font-family: var(--mono); font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-left: auto; }
+    .terminal-body { padding: 24px 24px 32px; font-family: var(--mono); font-size: 0.82rem; line-height: 1.9; }
+    .t-comment { color: #6a9955; }
+    .t-keyword { color: #569cd6; }
+    .t-fn { color: #dcdcaa; }
+    .t-str { color: #ce9178; }
+    .t-num { color: #b5cea8; }
+    .t-var { color: #9cdcfe; }
+    .t-op { color: rgba(255,255,255,0.6); }
+    .cursor {
+      display: inline-block; width: 8px; height: 15px;
+      background: var(--mint); vertical-align: middle;
+      animation: blink 1.2s step-end infinite;
+    }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* stats band */
+    .stats-band {
+      background: var(--sun);
+      padding: 20px 40px;
+      display: flex; justify-content: center; gap: 60px; flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--mono); font-size: 1.9rem; font-weight: 700; color: var(--ink); line-height: 1; }
+    .stat-label { font-size: 0.8rem; font-weight: 600; color: rgba(13,17,23,0.6); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 100px 40px; }
+
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 12px;
+    }
+    h2.section-title {
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 520px;
+      margin: 0 auto 56px;
+      text-align: center;
+    }
+
+    /* ─── TRACKS ─── */
+    #tracks { background: #fff; }
+    /* center section headings and track cards */
+    #tracks .section-inner { text-align: center; }
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      justify-items: center;
+    }
+    .track-card {
+      border: 1.5px solid rgba(0,0,0,0.08);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+      text-align: center;
+    }
+    .track-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
+    .track-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+    }
+    .track-card.web::before { background: var(--sky); }
+    .track-card.ai::before { background: var(--mint); }
+    .track-card.game::before { background: var(--coral); }
+    .track-card.data::before { background: var(--sun); }
+
+    .track-icon {
+      font-size: 2rem;
+      margin: 0 auto 16px;
+      display: block;
+    }
+    .track-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+    .track-age {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .track-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+    .track-tag {
+      display: inline-block;
+      background: var(--paper);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 50px;
+      padding: 3px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+
+    /* center headings and general content for sections after tracks */
+    #tracks ~ section .section-inner { text-align: center; }
+    #tracks ~ section .section-label,
+    #tracks ~ section .section-title,
+    #tracks ~ section .section-sub { margin-left: auto; margin-right: auto; }
+
+    /* schedule: center session rows content while preserving structure */
+    #schedule .session-row,
+    #schedule .session-row > div,
+    #schedule .session-week { text-align: center; }
+
+    /* center the registration form card while keeping form text left-aligned */
+    #register .form-card { margin-left: auto; margin-right: auto; }
+    #register .form-grid { justify-items: center; }
+    /* constrain each form group so the card is centered but labels/inputs remain left-aligned */
+    #register .form-group { width: 100%; max-width: 520px; }
+    #register label, #register input, #register select, #register textarea { text-align: left; }
+    #register input, #register select, #register textarea { max-width: 520px; width: 100%; box-sizing: border-box; }
+
+    /* FAQ: center the list and constrain each item width for readability */
+    #faq .faq-list { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    #faq .faq-list details { width: 100%; max-width: 820px; }
+
+    /* ─── SCHEDULE ─── */
+    #schedule { background: var(--paper); }
+    .sessions-list { display: flex; flex-direction: column; gap: 16px; }
+    .session-row {
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(0,0,0,0.06);
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      align-items: center;
+      gap: 24px;
+      transition: border-color 0.2s;
+    }
+    .session-row:hover { border-color: var(--sky); }
+    .session-week {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .session-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .session-meta { font-size: 0.85rem; color: var(--muted); }
+    .session-badge {
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-web { background: #e0f5ff; color: #005e8a; }
+    .badge-ai  { background: #d6fff5; color: #006b4f; }
+    .badge-game{ background: #ffe9e4; color: #8b2500; }
+    .badge-data{ background: #fff8d6; color: #6b4c00; }
+    .badge-all { background: #f0e9ff; color: #4a1d96; }
+
+    /* ─── REGISTRATION FORM ─── */
+    #register { background: var(--ink); }
+    #register h2.section-title { color: #fff; }
+    #register .section-label { color: var(--mint); }
+    #register .section-sub { color: rgba(255,255,255,0.5); }
+
+    .form-card {
+      background: #161b22;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 48px;
+      max-width: 720px;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.02em;
+    }
+    input, select, textarea {
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      width: 100%;
+    }
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.25); }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--mint);
+      background: rgba(27,255,184,0.05);
+    }
+    select option { background: #161b22; color: #fff; }
+    textarea { resize: vertical; min-height: 100px; }
+
+    .track-picker {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      grid-column: 1 / -1;
+    }
+    .track-option { display: none; }
+    .track-option + label {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      transition: all 0.15s;
+      letter-spacing: 0;
+    }
+    .track-option:checked + label {
+      border-color: var(--mint);
+      background: rgba(27,255,184,0.08);
+      color: var(--mint);
+    }
+    .track-option + label:hover { border-color: rgba(255,255,255,0.3); }
+
+    .form-submit {
+      margin-top: 32px;
+      background: var(--coral);
+      color: #fff;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 50px;
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(255,94,58,0.35);
+      width: 100%;
+    }
+    .form-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,94,58,0.5); }
+
+    .form-note {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.3);
+      text-align: center;
+      margin-top: 14px;
+    }
+
+    /* success overlay */
+    .success-overlay {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+    }
+    .success-icon { font-size: 3.5rem; margin-bottom: 16px; }
+    .success-title { font-size: 1.6rem; font-weight: 700; color: var(--mint); margin-bottom: 8px; }
+    .success-msg { color: rgba(255,255,255,0.55); font-size: 0.95rem; }
+
+    /* ─── FAQ ─── */
+    #faq { background: #fff; }
+    .faq-list { max-width: 700px; display: flex; flex-direction: column; gap: 4px; }
+    details {
+      border: 1.5px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    details + details { margin-top: 8px; }
+    summary {
+      padding: 20px 24px;
+      font-weight: 600;
+      font-size: 0.97rem;
+      cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      list-style: none;
+      transition: background 0.15s;
+    }
+    summary:hover { background: var(--paper); }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: '+';
+      font-family: var(--mono);
+      font-size: 1.2rem;
+      color: var(--muted);
+      transition: transform 0.2s;
+    }
+    details[open] summary::after { transform: rotate(45deg); }
+    .faq-body { padding: 0 24px 20px; color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink);
+      padding: 40px;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--mono);
+      font-weight: 700;
+      color: #fff;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+    .footer-sub { color: rgba(255,255,255,0.3); font-size: 0.82rem; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 110px 20px 60px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .stats-band { gap: 30px; padding: 20px; }
+      section { padding: 70px 20px; }
+      .hero-btns { justify-content: center; }
+      .form-card { padding: 28px 20px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .track-picker { grid-template-columns: 1fr; }
+      .session-row { grid-template-columns: 60px 1fr; }
+      .session-badge { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <span class="logo-dot"></span>
+    CodeMind<span style="color:var(--coral)">.</span>
+  </div>
+  <a href="#register" class="nav-cta">Register Now →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="orb1 hero-orb"></div>
+  <div class="orb2 hero-orb"></div>
+  <div class="orb3 hero-orb"></div>
+  <div class="hero-inner">
+    <div>
+      <p class="hero-eyebrow">// Summer 2026 · 4-week intensive</p>
+      <h1 class="hero-h1">Build real things.<br>Learn to <span class="accent">code</span>,<br>this summer.</h1>
+      <p class="hero-body">CodeMind Summer is a hands-on coding programme for ages 8–18. Pick a track, work in teams, and leave with a project you built yourself.</p>
+      <div class="hero-btns">
+        <a href="#register" class="btn-primary">Secure your spot</a>
+        <a href="#tracks" class="btn-ghost">See the tracks</a>
+      </div>
+    </div>
+    <div class="hero-terminal">
+      <div class="terminal-bar">
+        <span class="t-dot r"></span>
+        <span class="t-dot y"></span>
+        <span class="t-dot g"></span>
+        <span class="terminal-title">my_first_project.js</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-comment">// Week 4 — final project</span></div>
+        <div>&nbsp;</div>
+        <div><span class="t-keyword">import</span> <span class="t-var">codemind</span> <span class="t-keyword">from</span> <span class="t-str">'codemind'</span><span class="t-op">;</span></div>
+        <div>&nbsp;</div>
+        <div><span class="t-keyword">function</span> <span class="t-fn">buildMyDream</span><span class="t-op">(</span><span class="t-var">idea</span><span class="t-op">)</span> <span class="t-op">{</span></div>
+        <div>&nbsp;&nbsp;<span class="t-keyword">const</span> <span class="t-var">skills</span> <span class="t-op">=</span> <span class="t-op">[</span><span class="t-str">'JavaScript'</span><span class="t-op">,</span> <span class="t-str">'Web Dev'</span><span class="t-op">,</span> <span class="t-str">'Game Design'</span><span class="t-op">];</span></div>
+        <div>&nbsp;&nbsp;<span class="t-keyword">return</span> <span class="t-var">codemind</span><span class="t-op">.</span><span class="t-fn">ship</span><span class="t-op">(</span><span class="t-var">idea</span><span class="t-op">,</span> <span class="t-var">skills</span><span class="t-op">);</span></div>
+        <div><span class="t-op">}</span></div>
+        <div>&nbsp;</div>
+        <div><span class="t-fn">buildMyDream</span><span class="t-op">(</span><span class="t-str">'something amazing'</span><span class="t-op">);</span></div>
+        <div><span class="t-comment">// → your future starts here</span> <span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Use native form POST to Apps Script (targeted to hidden iframe) -->
+<!-- Removed AJAX/Node-specific submit handler to ensure Apps Script receives form posts -->
+
+<!-- STATS BAND -->
+<div class="stats-band">
+  <div class="stat-item">
+    <div class="stat-num">4</div>
+    <div class="stat-label">Weeks Intensive</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">2</div>
+    <div class="stat-label">Coding Tracks</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">Ages 8–18</div>
+    <div class="stat-label">All skill levels</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">Aug 3rd</div>
+    <div class="stat-label">Programme Starts</div>
+  </div>
+</div>
+
+<!-- TRACKS -->
+<section id="tracks">
+  <div class="section-inner">
+    <p class="section-label">// choose your path</p>
+    <h2 class="section-title">Two tracks. One unforgettable summer.</h2>
+    <p class="section-sub">Every track runs for the full four weeks. You'll leave with a working project and skills you can build on.</p>
+    <div class="tracks-grid">
+      <div class="track-card web">
+        <span class="track-icon">🌐</span>
+        <div class="track-name">Web & App Dev</div>
+        <div class="track-age">Ages 12–18 · Beginner friendly</div>
+        <p class="track-desc">Go from zero to a live personal website. Learn HTML, CSS, JavaScript, and how to deploy on the web.</p>
+        <span class="track-tag">HTML/CSS</span>
+        <span class="track-tag">JavaScript</span>
+        <span class="track-tag">Deployment</span>
+      </div>
+      <!-- <div class="track-card ai">
+        <span class="track-icon">🤖</span>
+        <div class="track-name">AI & Machine Learning</div>
+        <div class="track-age">Ages 14–18 · Some Python helpful</div>
+        <p class="track-desc">Train your own models, build a chatbot, and learn how the AI tools you use every day actually work.</p>
+        <span class="track-tag">Python</span>
+        <span class="track-tag">scikit-learn</span>
+        <span class="track-tag">APIs</span> -->
+      </div>
+      <div class="track-card game">
+        <span class="track-icon">🎮</span>
+        <div class="track-name">Game Development</div>
+        <div class="track-age">Ages 8–16 · No experience needed</div>
+        <p class="track-desc">Design levels, write game logic, and publish a browser-playable game by week four. Pure fun, real skills.</p>
+        <span class="track-tag">Scratch</span>
+        <!-- <span class="track-tag">Phaser.js</span>
+        <span class="track-tag">Game Design</span> -->
+      </div>
+      <!-- <div class="track-card data">
+        <span class="track-icon">📊</span>
+        <div class="track-name">Data & Visualisation</div>
+        <div class="track-age">Ages 13–18 · Curious minds</div>
+        <p class="track-desc">Wrangle real datasets, spot patterns, and tell stories with charts, maps, and interactive dashboards.</p>
+        <span class="track-tag">Python</span>
+        <span class="track-tag">Pandas</span>
+        <span class="track-tag">D3.js</span>
+      </div> -->
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule">
+  <div class="section-inner">
+    <p class="section-label">// what to expect</p>
+    <h2 class="section-title">A week-by-week journey</h2>
+    <p class="section-sub">Each week builds on the last. By week four you're shipping, not just learning.</p>
+    <div class="sessions-list">
+      <div class="session-row">
+        <div class="session-week">Week 01<br>AUG 3–7</div>
+        <div>
+          <div class="session-title">Foundations & Setup</div>
+          <div class="session-meta">Core tools, first programs, team introductions </div>
+        </div>
+        <span class="session-badge badge-all">All Tracks</span>
+      </div>
+      <div class="session-row">
+        <div class="session-week">Week 02<br>AUG 10–14</div>
+        <div>
+          <div class="session-title">Track Deep Dive</div>
+          <div class="session-meta">Intensive skill-building in your chosen track</div>
+        </div>
+        <span class="session-badge badge-all">All Tracks</span>
+      </div>
+      <div class="session-row">
+        <div class="session-week">Week 03<br>AUG 17–21</div>
+        <div>
+          <div class="session-title">Project Sprint</div>
+          <div class="session-meta">Build your main project with daily mentor check-ins · Mid-camp demo Friday</div>
+        </div>
+        <span class="session-badge badge-all">All Tracks</span>
+      </div>
+      <div class="session-row">
+        <div class="session-week">Week 04<br>AUG 24–28</div>
+        <div>
+          <div class="session-title">Ship It — Demo Day</div>
+          <div class="session-meta">Final polish, presentation prep · Public Demo Day on Friday Aug 28th</div>
+        </div>
+        <span class="session-badge badge-all">All Tracks</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTER FORM -->
+<section id="register">
+  <div class="section-inner">
+    <p class="section-label">// secure your spot</p>
+    <h2 class="section-title">Register for CodeMind Summer</h2>
+    <p class="section-sub">Spots fill fast. Fill out the form and we'll confirm within 24 hours.</p>
+
+    <div class="form-card" id="formCard">
+      <div id="successOverlay" class="success-overlay">
+        <div class="success-icon">🚀</div>
+        <div class="success-title">You're on the list!</div>
+        <div class="success-msg">Check your email for a confirmation within 24 hours.<br>Get ready to build something amazing this summer.</div>
+      </div>
+
+      <form id="regForm" method="post" action="https://script.google.com/macros/s/AKfycbxhE8ON8t3RRGqwkWrBVn-6NR3oLZJ0VtRtRALhJP34vjBPR1iGmT0ABYX3nsTt5Gl7ug/exec" target="hidden_iframe" novalidate>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName">Student First Name</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Ada" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Student Last Name</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Lovelace" required />
+          </div>
+          <div class="form-group">
+            <label for="age">Age</label>
+            <select id="age" name="age" required>
+              <option value="" disabled selected>Select age</option>
+              <option>8</option><option>9</option>
+              <option>10</option><option>11</option><option>12</option>
+              <option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="experience">Coding Experience</label>
+            <select id="experience" name="experience" required>
+              <option value="" disabled selected>Select level</option>
+              <option>Complete beginner</option>
+              <option>Some basics (Scratch / HTML)</option>
+              <option>Comfortable with one language</option>
+              <option>Intermediate coder</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="parentName">Parent / Guardian Name</label>
+            <input type="text" id="parentName" name="parentName" placeholder="Grace Lovelace" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Parent Email</label>
+            <input type="email" id="email" name="email" placeholder="grace@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Parent Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="+234 800 000 0000" />
+          </div>
+          <div class="form-group">
+            <label for="school">Student's School</label>
+            <input type="text" id="school" name="school" placeholder="School name" />
+          </div>
+
+          <div class="form-group full">
+            <label>Choose a Track</label>
+            <div class="track-picker">
+              <input type="radio" name="track" id="t-web" class="track-option" value="Web & App Dev" />
+              <label for="t-web">🌐 Web &amp; App Dev</label>
+              <!-- AI track removed -->
+              <input type="radio" name="track" id="t-game" class="track-option" value="Game Dev" />
+              <label for="t-game">🎮 Game Development</label>
+              <!-- Data track removed -->
+            </div>
+          </div>
+
+          <div class="form-group full">
+            <label for="goals">What does your child hope to build or learn? (optional)</label>
+            <textarea id="goals" name="goals" placeholder="e.g. I want to build a game about my city, or I'm curious how Instagram's algorithm works…"></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="form-submit">Register My Child →</button>
+        <p class="form-note">No payment required to register. We'll confirm availability and send next steps.</p>
+      </form>
+        <div id="latestRegistration" style="display:none;margin-top:18px;text-align:center;background:#fff;padding:12px;border-radius:8px;max-width:520px;margin-left:auto;margin-right:auto;color:#000"></div>
+        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <p class="section-label">// need to know</p>
+    <h2 class="section-title">Frequently asked questions</h2>
+    <p class="section-sub">Still have questions? Email us at hello@codespark.dev</p>
+    <div class="faq-list">
+      <details>
+        <summary>Does my child need a laptop?</summary>
+        <div class="faq-body">Yes — each student needs their own laptop running Windows, macOS, or ChromeOS. We'll send a setup guide before camp starts. Tablets and phones won't work for most tracks.</div>
+      </details>
+      <details>
+        <summary>What if my child has never coded before?</summary>
+        <div class="faq-body">That's exactly who we designed this for. The Web Dev and Game Dev tracks start from zero. Our coaches are trained to meet students exactly where they are.</div>
+      </details>
+      <details>
+        <summary>Is the programme in-person or online?</summary>
+        <div class="faq-body">CodeMind Summer 2026 runs online.</div>
+      </details>
+      
+      <details>
+        <summary>What is the student-to-coach ratio?</summary>
+        <div class="faq-body">We cap each track at 7 students with 1 coach, giving a 7:1 ratio. This is intentional — everyone gets real attention.</div>
+      </details>
+      <details>
+        <summary>Can siblings register for different tracks?</summary>
+        <div class="faq-body">Absolutely. Submit a separate registration for each child. Mention in the notes that they're siblings.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">CodeMind<span style="color:var(--coral)">.</span></div>
+  <p class="footer-sub">Osogbo, Nigeria · Summer 2026 · mrseun2000@gmail.com</p>
+</footer>
+
+<script>
+  (function(){
+    const form = document.getElementById('regForm');
+    const iframe = document.getElementById('hidden_iframe');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+      const required = ['firstName','lastName','age','experience','parentName','email'];
+      let valid = true;
+      required.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el.value || !el.value.trim()) {
+          el.style.borderColor = 'var(--coral)';
+          valid = false;
+        } else {
+          el.style.borderColor = '';
+        }
+      });
+      if (!document.querySelector('input[name="track"]:checked')) {
+        document.querySelectorAll('.track-option + label').forEach(l => l.style.borderColor = 'var(--coral)');
+        valid = false;
+      } else {
+        document.querySelectorAll('.track-option + label').forEach(l => l.style.borderColor = '');
+      }
+      if (!valid) {
+        e.preventDefault();
+        return;
+      }
+      // allow native form submit to proceed (targeted to hidden iframe)
+      // show a temporary submitting state
+      const submitBtn = form.querySelector('button[type=submit]');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+    });
+
+    // When iframe loads after form post, show success and reset form
+    iframe.addEventListener('load', function(){
+      const overlay = document.getElementById('successOverlay');
+      if (overlay) overlay.style.display = 'block';
+      form.reset();
+      const submitBtn = form.querySelector('button[type=submit]');
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Register My Child →'; }
+    });
+
+    // remove error highlight on input
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      el.addEventListener('input', () => el.style.borderColor = '');
+      el.addEventListener('change', () => el.style.borderColor = '');
+    });
+  })();
+</script>
+</body>
+</html>
