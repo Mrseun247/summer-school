@@ -55,6 +55,7 @@
       display: inline-block;
       animation: pulse 2s ease-in-out infinite;
     }
+    .logo img { width: 25px; height: 25px; }
     @keyframes pulse {
       0%,100% { transform: scale(1); opacity: 1; }
       50% { transform: scale(1.4); opacity: 0.7; }
@@ -148,6 +149,15 @@
       transition: border-color 0.2s, color 0.2s;
     }
     .btn-ghost:hover { border-color: var(--mint); color: var(--mint); }
+
+    /* ─── COUNTDOWN TIMER ─── */
+    .countdown { margin-top: 18px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .countdown-label { font-family: var(--mono); font-size: 0.8rem; color: rgba(255,255,255,0.8); font-weight:700; }
+    .countdown-timer { display: flex; align-items: center; gap: 10px; }
+    .time-segment { background: rgba(255,255,255,0.06); padding: 10px 14px; border-radius: 10px; text-align: center; min-width: 64px; }
+    .time-num { font-family: var(--mono); font-size: 1.2rem; font-weight: 700; color: var(--mint); }
+    .time-label { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+    .time-sep { font-family: var(--mono); font-size: 1.2rem; color: rgba(255,255,255,0.5); }
 
     /* code terminal card */
     .hero-terminal {
@@ -482,7 +492,16 @@
       color: #fff;
       font-size: 1.1rem;
       margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      margin-left: auto;
+      margin-right: auto;
     }
+    .copyright { font-size: inherit; font-weight: inherit; color: inherit; font-family: inherit; display:inline-block; vertical-align: middle; line-height: 1; margin-right: 8px; }
+    #copyYear { font-size: inherit; font-weight: inherit; font-family: inherit; }
+    .brand-text { font-family: inherit; font-weight: inherit; font-size: inherit; }
     .footer-sub { color: rgba(255,255,255,0.3); font-size: 0.82rem; }
 
     /* ─── RESPONSIVE ─── */
@@ -515,8 +534,9 @@
 <!-- NAV -->
 <nav>
   <div class="logo">
-    <span class="logo-dot"></span>
-    CodeMind<span style="color:var(--coral)">.</span>
+    <!-- <span class="logo-dot"></span> -->
+    <img src="https://img.icons8.com/?size=100&id=MSywwgB0nzMc&format=png&color=000000" alt="CodeMind Logo">
+    CodeMind<span style="color:var(--coral)"></span>
   </div>
   <a href="#register" class="nav-cta">Register Now →</a>
 </nav>
@@ -529,12 +549,24 @@
   <div class="orb3 hero-orb"></div>
   <div class="hero-inner">
     <div>
-      <p class="hero-eyebrow">// Summer 2026 · 4-week intensive</p>
+      <p class="hero-eyebrow">// CodeMind Summer 2026 · 4-week intensive</p>
       <h1 class="hero-h1">Build real things.<br>Learn to <span class="accent">code</span>,<br>this summer.</h1>
       <p class="hero-body">CodeMind Summer is a hands-on coding programme for ages 8–18. Pick a track, work in teams, and leave with a project you built yourself.</p>
       <div class="hero-btns">
         <a href="#register" class="btn-primary">Secure your spot</a>
         <a href="#tracks" class="btn-ghost">See the tracks</a>
+      </div>
+      <div class="countdown" aria-hidden="false">
+        <div class="countdown-label">Starts in</div>
+        <div class="countdown-timer" id="countdownTimer" role="timer" aria-live="polite">
+          <div class="time-segment"><div class="time-num" id="cd-days">0</div><div class="time-label">Days</div></div>
+          <div class="time-sep">:</div>
+          <div class="time-segment"><div class="time-num" id="cd-hours">00</div><div class="time-label">Hours</div></div>
+          <div class="time-sep">:</div>
+          <div class="time-segment"><div class="time-num" id="cd-mins">00</div><div class="time-label">Mins</div></div>
+          <div class="time-sep">:</div>
+          <div class="time-segment"><div class="time-num" id="cd-secs">00</div><div class="time-label">Secs</div></div>
+        </div>
       </div>
     </div>
     <div class="hero-terminal">
@@ -796,7 +828,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">CodeMind<span style="color:var(--coral)">.</span></div>
+  <div class="footer-logo"><span class="copyright">&copy; <span id="copyYear">2026</span></span><span class="brand-text">Berachah Global Concepts</span><span style="color:var(--coral)"></span></div>
   <p class="footer-sub">Osogbo, Nigeria · Summer 2026 · mrseun2000@gmail.com</p>
 </footer>
 
@@ -888,7 +920,36 @@
           var s = document.createElement('script');
           s.src = 'https://cdn.emailjs.com/sdk/3.2.0/email.min.js';
           s.onload = sendEmail;
-          s.onerror = function(e){ console.error('Failed to load EmailJS SDK', e); };
+          s.onerror = function(e){
+            console.error('Failed to load EmailJS SDK', e);
+            // REST API fallback: try sending directly to EmailJS API
+            try {
+              const payload = {
+                service_id: EMAILJS_SERVICE_ID,
+                template_id: EMAILJS_TEMPLATE_ID,
+                user_id: EMAILJS_PUBLIC_KEY,
+                template_params: {
+                  to_name: submitted.parentName || '',
+                  to_email: recipient,
+                  student_name: (submitted.firstName || '') + ' ' + (submitted.lastName || ''),
+                  track: submitted.track || '',
+                  message: 'Thank you for registering for CodeMind Summer — we will confirm within 24 hours.'
+                }
+              };
+              console.log('Attempting EmailJS REST fallback to', 'https://api.emailjs.com/api/v1.0/email/send');
+              fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              }).then(function(res){
+                if (res.ok) {
+                  console.log('Confirmation email sent via REST fallback');
+                } else {
+                  res.text().then(function(t){ console.error('EmailJS REST error', res.status, t); });
+                }
+              }).catch(function(err){ console.error('EmailJS REST request failed', err); });
+            } catch (err) { console.error('EmailJS REST fallback failed', err); }
+          };
           document.head.appendChild(s);
         } else sendEmail();
 
@@ -900,6 +961,47 @@
       el.addEventListener('input', () => el.style.borderColor = '');
       el.addEventListener('change', () => el.style.borderColor = '');
     });
+  })();
+</script>
+<script>
+  // Countdown timer to programme start (local midnight 3 Aug 2026)
+  (function(){
+    const targetDate = new Date(2026, 7, 3, 0, 0, 0);
+    const elDays = document.getElementById('cd-days');
+    const elHours = document.getElementById('cd-hours');
+    const elMins = document.getElementById('cd-mins');
+    const elSecs = document.getElementById('cd-secs');
+    if (!elDays || !elHours || !elMins || !elSecs) return;
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function update(){
+      const now = new Date();
+      let diff = Math.max(0, targetDate - now);
+      const days = Math.floor(diff / (1000*60*60*24));
+      diff -= days * (1000*60*60*24);
+      const hours = Math.floor(diff / (1000*60*60));
+      diff -= hours * (1000*60*60);
+      const mins = Math.floor(diff / (1000*60));
+      diff -= mins * (1000*60);
+      const secs = Math.floor(diff / 1000);
+      elDays.textContent = String(days);
+      elHours.textContent = pad(hours);
+      elMins.textContent = pad(mins);
+      elSecs.textContent = pad(secs);
+      if (targetDate - now <= 0){
+        const container = document.getElementById('countdownTimer');
+        if (container) container.innerHTML = '<div style="color:var(--mint);font-weight:700;">Starts today — see you in camp!</div>';
+        clearInterval(tid);
+      }
+    }
+    update();
+    const tid = setInterval(update, 1000);
+  })();
+</script>
+<script>
+  // set footer year dynamically
+  (function(){
+    const el = document.getElementById('copyYear');
+    if (el) el.textContent = new Date().getFullYear();
   })();
 </script>
 </body>
