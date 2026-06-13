@@ -828,6 +828,8 @@
         e.preventDefault();
         return;
       }
+      // mark that we are awaiting the iframe response for this submit
+      window._cm_submit_pending = true;
       // allow native form submit to proceed (targeted to hidden iframe)
       // show a temporary submitting state
       const submitBtn = form.querySelector('button[type=submit]');
@@ -836,46 +838,60 @@
 
     // When iframe loads after form post, show success and reset form
     iframe.addEventListener('load', function(){
-      const overlay = document.getElementById('successOverlay');
-      if (overlay) overlay.style.display = 'block';
-      // capture submitted values for email
+      // Only handle iframe loads that follow a form submission
+      if (!window._cm_submit_pending) return;
+      window._cm_submit_pending = false;
+
+      // capture submitted values for email (read before reset)
       const formData = new FormData(form);
       const submitted = Object.fromEntries(formData.entries());
+
+      // reset UI
       form.reset();
       const submitBtn = form.querySelector('button[type=submit]');
       if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Register My Child →'; }
+      const overlay = document.getElementById('successOverlay');
+      if (overlay) overlay.style.display = 'block';
 
-        // EmailJS: send confirmation to registrant if configured
+      // EmailJS: send confirmation to registrant if configured and email looks valid
       try {
-        // Config: replace TEMPLATE_ID and PUBLIC_KEY with your EmailJS values
         const EMAILJS_SERVICE_ID = 'service_tbzjg6k';
-        const EMAILJS_TEMPLATE_ID = window.EMAILJS_TEMPLATE_ID || 'template_congrats';
+        const EMAILJS_TEMPLATE_ID = window.EMAILJS_TEMPLATE_ID || 'template_c41p2hl';
         const EMAILJS_PUBLIC_KEY = window.EMAILJS_PUBLIC_KEY || '';
-        if (EMAILJS_PUBLIC_KEY && EMAILJS_TEMPLATE_ID) {
-          // load emailjs SDK if not already loaded
-          if (!window.emailjs) {
-            var s = document.createElement('script');
-            s.src = 'https://cdn.emailjs.com/sdk/3.2.0/email.min.js';
-            s.onload = sendEmail;
-            document.head.appendChild(s);
-          } else sendEmail();
-
-          function sendEmail(){
-            try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e) { console.warn('emailjs.init failed', e); }
-            const params = {
-              to_name: submitted.parentName || '',
-              to_email: submitted.email || '',
-              student_name: (submitted.firstName || '') + ' ' + (submitted.lastName || ''),
-              track: submitted.track || '',
-              message: 'Thank you for registering for CodeMind Summer — we will confirm within 24 hours.'
-            };
-            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
-              .then(() => console.log('Confirmation email sent'))
-              .catch(err => console.error('EmailJS send error', err));
-          }
-        } else {
-          console.log('EmailJS not configured (set window.EMAILJS_PUBLIC_KEY and window.EMAILJS_TEMPLATE_ID)');
+        const recipient = (submitted.email || '').trim();
+        if (!recipient || recipient.indexOf('@') === -1) {
+          console.warn('No valid recipient email; skipping EmailJS send', recipient);
+          return;
         }
+        if (!EMAILJS_PUBLIC_KEY || !EMAILJS_TEMPLATE_ID) {
+          console.log('EmailJS not configured (set window.EMAILJS_PUBLIC_KEY and window.EMAILJS_TEMPLATE_ID)');
+          return;
+        }
+
+        // load emailjs SDK if not already loaded
+        function sendEmail(){
+          try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e) { console.warn('emailjs.init failed', e); }
+          const params = {
+            to_name: submitted.parentName || '',
+            to_email: recipient,
+            student_name: (submitted.firstName || '') + ' ' + (submitted.lastName || ''),
+            track: submitted.track || '',
+            message: 'Thank you for registering for CodeMind Summer — we will confirm within 24 hours.'
+          };
+          console.log('Sending confirmation email to', recipient, 'via EmailJS service', EMAILJS_SERVICE_ID, 'template', EMAILJS_TEMPLATE_ID);
+          emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
+            .then(() => console.log('Confirmation email sent'))
+            .catch(err => console.error('EmailJS send error', err));
+        }
+
+        if (!window.emailjs) {
+          var s = document.createElement('script');
+          s.src = 'https://cdn.emailjs.com/sdk/3.2.0/email.min.js';
+          s.onload = sendEmail;
+          s.onerror = function(e){ console.error('Failed to load EmailJS SDK', e); };
+          document.head.appendChild(s);
+        } else sendEmail();
+
       } catch (err) { console.error('Email send failed', err); }
     });
 
