@@ -37,3 +37,18 @@ git push -u origin main
 ```
 
 If you want me to attempt the push from this environment, confirm you have git auth configured here (SSH key or credential helper). If not, run the commands above locally.
+
+Email confirmations (optional)
+
+- This project can send an automatic confirmation email to each registrant using EmailJS.
+- Create an EmailJS account, add an email `service` (your service id is `service_7p2w0ab`) and create a `template` (for example `template_congrats`) with variables: `to_name`, `to_email`, `student_name`, `track`, `message`.
+- In the browser (before loading `summer.html`) set two global variables to enable sending:
+
+```html
+<script>
+   window.EMAILJS_PUBLIC_KEY = 'your_public_key_here';
+   window.EMAILJS_TEMPLATE_ID = 'template_congrats';
+</script>
+```
+
+- The page will load the EmailJS SDK and send the template after a successful form post (the form posts to Apps Script via a hidden iframe). If EmailJS isn't configured, the page will simply skip sending email.
